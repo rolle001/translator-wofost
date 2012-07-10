@@ -8,10 +8,14 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.sql.Date;
 import java.text.DateFormat;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.Locale;
 import java.util.Map;
 
 import org.agmip.core.types.TranslatorOutput;
@@ -23,7 +27,11 @@ public class ModelOutput implements TranslatorOutput {
     public void writeFile(String filePath, Map input) {
         // Write your file out here.
     	
-    	
+    	NumberFormat nf = NumberFormat.getInstance(Locale.US);
+		nf.setMaximumFractionDigits(1);
+		nf.setMinimumFractionDigits(1);
+		nf.setGroupingUsed(false);
+		
     	// assumed there is only one weather section 
     	BucketEntry weatherData = MapUtil.getBucket(input, "weather").get(0);
 		String stationNumber = "1";
@@ -61,8 +69,6 @@ public class ModelOutput implements TranslatorOutput {
 	    				bw.close();
 	    				out.close();
 	    			}
-	    			
-	    			//date1 = (Date)formatter.parse(date);  
 	    			
 	    			String fName = filePath + stationName + year1 + "." + year2;
 	    			year = year1 + year2;
@@ -103,18 +109,25 @@ public class ModelOutput implements TranslatorOutput {
 	    			
 	    		}
 	    		
-	    		String irra = MapUtil.getValueOr(dailyData, "srad",  "-99");
-	    		String tmin = MapUtil.getValueOr(dailyData, "tmin",  "-99");
-	    		String tmax = MapUtil.getValueOr(dailyData, "tmax",  "-99");
-	    		String vap  = MapUtil.getValueOr(dailyData, "vprsd", "-99");
-	    		String wind = MapUtil.getValueOr(dailyData, "wind",  "-99");
-	    		String prec = MapUtil.getValueOr(dailyData, "rain",  "-99");
+	    		String irra = MapUtil.getValueOr(dailyData, "srad",  "-99.9"); 
+	    		double firra= Float.parseFloat(irra);
+	    		if (irra != "-99.9")
+	    		{
+	    			firra = firra * 1000.0;
+	    		}
+	    		irra = nf.format(firra);
+	    		
+	    		String tmin = MapUtil.getValueOr(dailyData, "tmin",  "-99.9");
+	    		String tmax = MapUtil.getValueOr(dailyData, "tmax",  "-99.9");
+	    		String vap  = MapUtil.getValueOr(dailyData, "vprsd", "-99.9");
+	    		String wind = MapUtil.getValueOr(dailyData, "wind",  "-99.9");
+	    		String prec = MapUtil.getValueOr(dailyData, "rain",  "-99.9");
 	    		
 	    		//Date date = (Date)formatter.parse(date);  
 	    		dayNr++;
-	    		 	    		
+	    		
 	    		//bw.write("1 2000   1   831.   0.1   8.2   0.833   1.0   0.9");
-	    		bw.write(String.format("%s %4s %3d %7s %4s %5s %7s %5s %5s\n", stationNumber, year, dayNr, irra, tmin, tmax, vap, wind, prec));
+	    		bw.write(String.format("%s %4s %3d %8s %5s %5s %7s %5s %5s\n", stationNumber, year, dayNr, irra, tmin, tmax, vap, wind, prec));
 	    	}
 	    		
 
