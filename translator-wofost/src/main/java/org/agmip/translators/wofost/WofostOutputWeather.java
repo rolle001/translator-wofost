@@ -6,21 +6,14 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
-import java.text.DateFormat;
-import java.text.DecimalFormat;
-import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.Map;
 
-import org.agmip.core.types.TranslatorOutput;
 import org.agmip.util.MapUtil;
 import org.agmip.util.MapUtil.BucketEntry;
 
@@ -29,7 +22,7 @@ public class WofostOutputWeather extends WofostOutputSoil {
 	// todo:
 	//1. check default values in case of missing values
 	//2. check meaning of first data line (see in code) 
-	//3. chack multiple year input, only first year in output
+	//3. check multiple year input, only first year in output
 	//4. prepare code to multiple weather sections (now assumed one)
 	
 	
