@@ -49,11 +49,13 @@ public class WofostOutputWeather extends WofostOutputSoil {
     	BucketEntry weatherData = MapUtil.getBucket(input, "weather").get(0);
   	
 		String stationNumber = "1";
-		String WCCFormat = "2";      // cabo format
+		String WCCFormat = "2";      // CABO format
 		
     	LinkedHashMap<String, String> weatherDataValues = weatherData.getValues();
     	
-    	String stationName = weatherDataValues.get("wst_name").replace(",", "_");
+    	String stationName = MapUtil.getValueOr(weatherDataValues, "wst_name","unknown");
+    	String country = MapUtil.getValueOr(weatherDataValues, "wst_loc_1", "unknown");
+    	
     	String lat  = MapUtil.getValueOr(weatherDataValues, "wst_lat", "-99");
 		String lon  = MapUtil.getValueOr(weatherDataValues, "wst_long", "-99");
 		String elev = MapUtil.getValueOr(weatherDataValues, "elev", "-99");
@@ -81,7 +83,7 @@ public class WofostOutputWeather extends WofostOutputSoil {
 	    				out.close();
 	    			}
 	    			
-	    			String fName = filePath + stationName + year1 + "." + year2;
+	    			String fName = filePath + stationName.replace(",", "_") + year1 + "." + year2;
 	    			year = year1 + year2;
 	    			
     				FileOutputStream fstream = new FileOutputStream(fName);
@@ -89,16 +91,17 @@ public class WofostOutputWeather extends WofostOutputSoil {
     				bw = new BufferedWriter(new OutputStreamWriter(out));		
     					
     				bw.write("*---------------------------------------------------------*\n");
-    				bw.write(String.format("*   Country: %s\n", ""));
     				bw.write(String.format("*   Station: %s\n", stationName));
+    				bw.write(String.format("*   Country: %s\n", country));
     				bw.write(String.format("*      Year: %s\n", year));
-    				bw.write("*    Source:\n");
     				bw.write("*\n");
-    				bw.write("*    Author:\n");
     				bw.write(String.format("* Longitude:%s\n", lon));
     				bw.write(String.format("*  Latitude: %s\n", lat));
     				bw.write(String.format("* Elevation: %s m.\n", elev));
-    				bw.write("*  Comments:\n");		
+    				bw.write("*\n");
+    				bw.write("*    Source: AgMIP database\n");
+    				bw.write("*    Author: AgMIP translator\n");
+    				bw.write("*  Comments: automatic generated input file.\n");		
     				bw.write("*\n");
     				bw.write("*  Columns:\n");
     				bw.write("*  ========\n");
@@ -116,9 +119,9 @@ public class WofostOutputWeather extends WofostOutputSoil {
     				bw.write(String.format("** WCCYEARNR=%4s\n", year));
     				bw.write("*---------------------------------------------------------*\n");
     				
-    				//todo: 3. what is this line?
-    				bw.write("   5.67  51.97     7. 0.00 0.00	    	\n");
-	    			
+    				String angA = MapUtil.getValueOr(weatherDataValues, "anga", "0.00");		// angstrom coefficient A    				
+    				String angB = MapUtil.getValueOr(weatherDataValues, "angb", "0.00");        // angstrom coefficient B
+    				bw.write(String.format("   %s %s %s %s %s\n", lon, lat, elev, angA, angB));
 	    		}
 	    		
 	    		String irra = MapUtil.getValueOr(dailyData, "srad",  "-99.9"); 
@@ -141,7 +144,7 @@ public class WofostOutputWeather extends WofostOutputSoil {
 	    		    	
 	    		Integer dayNr = calculateDayInYear(iDay, iMonth, iYear);
 	    		
-	    		bw.write(String.format("%s %4s %3d %8s %5s %5s %7s %5s %5s\n", stationNumber, year, dayNr, irra, tmin, tmax, vap, wind, prec));
+	    		bw.write(String.format("   %s %4s %3d %8s %5s %5s %7s %5s %5s\n", stationNumber, year, dayNr, irra, tmin, tmax, vap, wind, prec));
 	    	}
 	    		
 
