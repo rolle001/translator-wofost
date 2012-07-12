@@ -19,12 +19,7 @@ import org.agmip.util.MapUtil.BucketEntry;
 
 public class WofostOutputWeather extends WofostOutputSoil {
 	
-	// todo:
-	//1. check default values in case of missing values
-	//2. check meaning of first data line (see in code) 
-	//3. check multiple year input, only first year in output
-	//4. prepare code to multiple weather sections (now assumed one)
-	
+	// todo: check default values in case of missing values
 	
 	private static final Calendar _calendar = new GregorianCalendar();
 
@@ -46,7 +41,7 @@ public class WofostOutputWeather extends WofostOutputSoil {
 		nf.setGroupingUsed(false);
 		
     	// assumed there is only one weather section 
-    	BucketEntry weatherData = MapUtil.getBucket(input, "weather").get(0);
+    	BucketEntry weatherData = MapUtil.getBucket(input, "weather");
   	
 		String stationNumber = "1";
 		String WCCFormat = "2";      // CABO format

@@ -6,7 +6,7 @@ import org.agmip.core.types.TranslatorOutput;
 
 public abstract class WofostOutput implements TranslatorOutput {
 
-	public void writeFile(String arg0, Map arg1) {
+	public void writeFile(String filePath, Map input) {
 		// TODO Auto-generated method stub
 
 	}

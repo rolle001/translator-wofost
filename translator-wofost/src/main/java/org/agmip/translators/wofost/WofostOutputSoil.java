@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Map;
 
-import org.agmip.core.types.TranslatorOutput;
 import org.agmip.util.MapUtil;
 import org.agmip.util.MapUtil.BucketEntry;
 import org.apache.velocity.Template;
@@ -13,6 +12,9 @@ import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.Velocity;
 
 public class WofostOutputSoil extends WofostOutput {
+	
+	public String soilFileName = "";
+	public String soilName = "";;
 
 	public void writeFile(String filePath, Map input) {
 		
@@ -21,13 +23,15 @@ public class WofostOutputSoil extends WofostOutput {
 		Velocity.init();        
 		VelocityContext context = new VelocityContext();
 		
-		
 		// Weather variable.        
-		BucketEntry soil = MapUtil.getBucket(input, "soil").get(0);     
+		BucketEntry soil = MapUtil.getBucket(input, "soil");
+		     
 		ArrayList data = soil.getDataList();
 		
-		String solName = MapUtil.getValueOr(soil.getValues(), "soil_name", "default_name");
-		context.put( "SOLNAM", solName);
+		soilName = MapUtil.getValueOr(soil.getValues(), "soil_name", "default_name");
+		soilFileName = String.format("%s.sol", soilName.replace(' ' ,'_'));
+		
+		context.put( "SOLNAM", soilName);
 		context.put( "ID", MapUtil.getValueOr(soil.getValues(), "soil_id", ""));  
 		context.put( "CLASSIFICATION", MapUtil.getValueOr(soil.getValues(), "classification", ""));
 		context.put( "NOTES", MapUtil.getValueOr(soil.getValues(), "sl_notes", ""));
@@ -41,8 +45,8 @@ public class WofostOutputSoil extends WofostOutput {
 		// Write template.        
 		Template template = Velocity.getTemplate("src\\main\\resources\\wofost_template.sol");        
 		FileWriter F;        
-		try {                        
-			F = new FileWriter(String.format("%s%s.sol", filePath, solName));            
+		try {              
+			F = new FileWriter(String.format("%s%s", filePath, soilName));            
 			template.merge( context, F );            
 			F.close();                    
 			} 

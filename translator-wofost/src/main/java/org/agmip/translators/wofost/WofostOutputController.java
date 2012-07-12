@@ -2,16 +2,25 @@ package org.agmip.translators.wofost;
 
 import java.util.Map;
 
+import org.agmip.util.MapUtil;
+
 public class WofostOutputController {
 	
-	private WofostOutput[] outputs = {
-	        new WofostOutputSoil(),
-	        new WofostOutputWeather()};
-	    
-	    public void writeFiles(String arg0, Map result) {
+	private WofostOutputSoil wofostOutputSoil = new WofostOutputSoil();
+	private WofostOutputSite wofostOutputSite = new WofostOutputSite();
+	private WofostOutputWeather wofostOutputWeather = new WofostOutputWeather();
+	
+	    public void writeFiles(String filePath, Map input) {
 	        
-	        for (int i = 0; i < outputs.length; i++) {
-	            outputs[i].writeFile(arg0, result);
-	        }
+	    	String ExpName = MapUtil.getValueOr(input, "exname", "default");
+	    	
+	    	wofostOutputSoil.writeFile(filePath, input);
+	    	
+	    	wofostOutputWeather.writeFile(filePath, input);
+	    	
+	    	wofostOutputSite.soilFileName = wofostOutputSoil.soilFileName;
+	    	wofostOutputSite.ExpName = ExpName;
+	    	wofostOutputSite.writeFile(filePath, input);
+	    	
 	    }
 }
