@@ -13,8 +13,8 @@ import org.apache.velocity.app.Velocity;
 
 public class WofostOutputSoil extends WofostOutput {
 	
-	public String soilFileName = "";
-	public String soilName = "";;
+	//public String soilFileName = "";
+	//public String soilName = "";;
 
 	public void writeFile(String filePath, Map input) {
 		
@@ -31,7 +31,7 @@ public class WofostOutputSoil extends WofostOutput {
 		soilName = MapUtil.getValueOr(soil.getValues(), "soil_name", "default_name");
 		soilFileName = String.format("%s.sol", soilName.replace(' ' ,'_'));
 		
-		context.put( "SOLNAM", soilName);
+		context.put( "SOLNAM", quotedStr(soilName));
 		context.put( "ID", MapUtil.getValueOr(soil.getValues(), "soil_id", ""));  
 		context.put( "CLASSIFICATION", MapUtil.getValueOr(soil.getValues(), "classification", ""));
 		context.put( "NOTES", MapUtil.getValueOr(soil.getValues(), "sl_notes", ""));
@@ -43,10 +43,10 @@ public class WofostOutputSoil extends WofostOutput {
 		
 		
 		// Write template.        
-		Template template = Velocity.getTemplate("src\\main\\resources\\wofost_template.sol");        
+		Template template = Velocity.getTemplate(templatePath + "wofost_template.sol");        
 		FileWriter F;        
 		try {              
-			F = new FileWriter(String.format("%s%s", filePath, soilName));            
+			F = new FileWriter(String.format("%s%s", filePath, soilFileName));            
 			template.merge( context, F );            
 			F.close();                    
 			} 

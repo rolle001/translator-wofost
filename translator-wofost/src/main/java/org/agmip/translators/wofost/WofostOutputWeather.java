@@ -17,7 +17,7 @@ import java.util.Map;
 import org.agmip.util.MapUtil;
 import org.agmip.util.MapUtil.BucketEntry;
 
-public class WofostOutputWeather extends WofostOutputSoil {
+public class WofostOutputWeather extends WofostOutput {
 	
 	// todo: check default values in case of missing values
 	
@@ -48,7 +48,8 @@ public class WofostOutputWeather extends WofostOutputSoil {
 		
     	LinkedHashMap<String, String> weatherDataValues = weatherData.getValues();
     	
-    	String stationName = MapUtil.getValueOr(weatherDataValues, "wst_name","unknown");
+    	climateName = MapUtil.getValueOr(weatherDataValues, "wst_name","unknown");
+    	climateFileName = climateName.replace(",", "_") + stationNumber + ".";
     	String country = MapUtil.getValueOr(weatherDataValues, "wst_loc_1", "unknown");
     	
     	String lat  = MapUtil.getValueOr(weatherDataValues, "wst_lat", "-99");
@@ -64,13 +65,13 @@ public class WofostOutputWeather extends WofostOutputSoil {
     	{	
 	    	for (LinkedHashMap<String, String> dailyData : daily  )
 	    	{
-	    		String date  = MapUtil.getValueOr(dailyData, "w_date", "19010101");
-	    		String year1  = String.copyValueOf(date.toCharArray(), 0, 1);
-	    		String year2  = String.copyValueOf(date.toCharArray(), 1, 3);
-	    		String month  = String.copyValueOf(date.toCharArray(), 4, 2);
-	    		String day    = String.copyValueOf(date.toCharArray(), 6, 2);    	
+	    		String date = MapUtil.getValueOr(dailyData, "w_date", "19010101");
+	    		String _year = String.copyValueOf(date.toCharArray(), 0, 4);
+	    		String year2 = String.copyValueOf(date.toCharArray(), 1, 3);
+	    		String month = String.copyValueOf(date.toCharArray(), 4, 2);
+	    		String day   = String.copyValueOf(date.toCharArray(), 6, 2);    	
 	    			    		
-	    		if (!year.equals(year1+year2))
+	    		if (!year.equals(_year))
 	    		{
 	    			if (bw != null)
 	    			{
@@ -78,15 +79,16 @@ public class WofostOutputWeather extends WofostOutputSoil {
 	    				out.close();
 	    			}
 	    			
-	    			String fName = filePath + stationName.replace(",", "_") + year1 + "." + year2;
-	    			year = year1 + year2;
+	    			year = _year;
+	    			
+	    			String fName = filePath + climateFileName + year2;
 	    			
     				FileOutputStream fstream = new FileOutputStream(fName);
     				out = new DataOutputStream(fstream);
     				bw = new BufferedWriter(new OutputStreamWriter(out));		
     					
     				bw.write("*---------------------------------------------------------*\n");
-    				bw.write(String.format("*   Station: %s\n", stationName));
+    				bw.write(String.format("*   Station: %s\n", climateName));
     				bw.write(String.format("*   Country: %s\n", country));
     				bw.write(String.format("*      Year: %s\n", year));
     				bw.write("*\n");
@@ -109,7 +111,7 @@ public class WofostOutputWeather extends WofostOutputSoil {
     				bw.write("*  vapour pressure (kPa)\n");
     				bw.write("*  mean wind speed (m s-1)\n");
     				bw.write("*  precipitation (mm d-1)\n");
-    				bw.write(String.format("** WCCDESCRIPTION=%s\n", stationName));
+    				bw.write(String.format("** WCCDESCRIPTION=%s\n", climateName));
     				bw.write(String.format("** WCCFORMAT=2\n", WCCFormat));  													
     				bw.write(String.format("** WCCYEARNR=%4s\n", year));
     				bw.write("*---------------------------------------------------------*\n");
@@ -133,7 +135,7 @@ public class WofostOutputWeather extends WofostOutputSoil {
 	    		String wind = MapUtil.getValueOr(dailyData, "wind",  "-99.9");
 	    		String prec = MapUtil.getValueOr(dailyData, "rain",  "-99.9");
 	    		
-	    		int iYear = Integer.parseInt(year1+year2);
+	    		int iYear = Integer.parseInt(year);
 	    		int iMonth = Integer.parseInt(month);
 	    		int iDay = Integer.parseInt(day);
 	    		    	
