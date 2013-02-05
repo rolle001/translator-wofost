@@ -1,12 +1,11 @@
 package org.agmip.translators.wofost;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.LinkedHashMap;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
@@ -16,6 +15,7 @@ import org.agmip.util.MapUtil;
 public class WofostOutputController {
 	
 		File[] listOfFiles;
+		private List<File> fileList = new ArrayList<File>();
 
 		private void zipFiles(String zipFile) {
 			byte[] buf = new byte[1024];
@@ -25,13 +25,12 @@ public class WofostOutputController {
 			    ZipOutputStream out = new ZipOutputStream(new FileOutputStream(outFilename));
 
 			    // Compress the files
-			    for (int i=0; i<listOfFiles.length; i++) {
+			    for (File f: fileList) {
 			    	
-			    	File f = listOfFiles[i];
 			    	FileInputStream in = new FileInputStream(f.getAbsolutePath());
 
 			        // Add ZIP entry to output stream
-			        out.putNextEntry(new ZipEntry(f.getName()));
+			        out.putNextEntry(new ZipEntry(f.getAbsolutePath()));
 
 			        // Transfer bytes from the file to the ZIP file
 			        int len;
@@ -42,6 +41,7 @@ public class WofostOutputController {
 			        // Complete the entry
 			        out.closeEntry();
 			        in.close();
+			        f.delete();
 			    }
 
 			    // Complete the ZIP file
@@ -52,6 +52,34 @@ public class WofostOutputController {
 		}
 		 
 	
+		private void createDir(String dirName)
+		{
+	    	File theTempPath = new File(dirName);
+	    	theTempPath.mkdir();
+			
+		}
+		
+		private void addFiles(File f)
+		{
+			if (f.isDirectory())
+			{
+				for (File ff: f.listFiles())
+					addFiles(ff);
+			}
+			else
+				fileList.add(f);	
+		}
+		
+		private void deleteFiles(File f)
+		{
+			if (f.isDirectory())
+			{
+				for (File ff: f.listFiles())
+					deleteFiles(ff);
+			}
+			f.delete();	
+		}
+		
 	    public void writeFiles(String filePath, Map input) {
 	        
 	    	WofostOutput.expName = MapUtil.getValueOr(input, "exname", "default");
@@ -62,24 +90,48 @@ public class WofostOutputController {
 	    		thePath.mkdir();
 	    	
 	    	String tempFilePath = filePath + "$temp\\";
-	    	File theTempPath = new File(tempFilePath);
-	    	theTempPath.mkdir();
+	    	createDir(tempFilePath);
+	    	   
+	    	String tempFileWeatherPath = tempFilePath + "meteo\\cabowe\\";
+	    	createDir(tempFilePath + "meteo\\");
+	    	createDir(tempFileWeatherPath);
+	    
+	    	String tempFileSoilPath = tempFilePath + "soild\\";
+	    	createDir(tempFileSoilPath);
+	    		    	
+	    	String tempFileRunPath = tempFilePath + "runs\\";
+	    	createDir(tempFileRunPath);
+
+	    	new WofostOutputWeather().writeFile(tempFileWeatherPath, input);
+	    	new WofostOutputSoil().writeFile(tempFileSoilPath, input);
 	    	
-	    	new WofostOutputSoil().writeFile(tempFilePath, input);
-	    	new WofostOutputWeather().writeFile(tempFilePath, input);
-	    	new WofostOutputSite().writeFile(tempFilePath, input);
-	    	new WofostOutputTimer().writeFile(tempFilePath, input);
-	    	new WofostOutputRerun().writeFile(tempFilePath, input);
-	    	new WofostOutputRunopt().writeFile(tempFilePath, input);
+	    	new WofostOutputExperiments().writeFile(tempFileRunPath, input);
+	    		    	
+//	    	new WofostOutputSite().writeFile(tempFilePath, input);
+//	    	new WofostOutputTimer().writeFile(tempFilePath, input);
+//	    	new WofostOutputRerun().writeFile(tempFilePath, input);
+//	    	new WofostOutputRunopt().writeFile(tempFilePath, input);
+	    	
+	    	List<String> errList = WofostOutput.errorList();
+	    	for (int i = 0; i < errList.size(); i++)
+	    		System.out.println(errList.get(i));
 	    	
 	    	// zip all files
-	    	listOfFiles = theTempPath.listFiles(); 
-	    	zipFiles(outputFileName);
+	    	File theTempPath = new File(tempFilePath);
+	    	File[] _files = theTempPath.listFiles(); 
+	    	for (File f: _files)
+	    		addFiles(f);
+	    		    	
+//	    	zipFiles(outputFileName);
 	    	
-	    	//remove temp directory 
-	    	for (File f : listOfFiles)
-	    		f.delete();
-	    	theTempPath.delete();
+	    	//remove files
+//	    	for (File f : _files)
+//	    		deleteFiles(f);
+//	    		    	
+//	    	new File(tempFileWeatherPath).delete();
+//	    	new File(tempFileSoilPath).delete();
+//	    	theTempPath.delete();
+	    	
 	    	
 	    }
 }

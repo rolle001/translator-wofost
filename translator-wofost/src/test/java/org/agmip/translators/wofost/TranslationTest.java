@@ -46,12 +46,12 @@ public class TranslationTest
       
         System.out.println("start");
         
-        FileInputStream fstream = new FileInputStream("src\\test\\resources\\ufga8201_mzx.json");
+        //FileInputStream fstream = new FileInputStream("src\\test\\resources\\ufga8201_mzx.json");
+        FileInputStream fstream = new FileInputStream("src\\test\\resources\\mach_full.json");
         DataInputStream in = new DataInputStream(fstream);
 		BufferedReader br = new BufferedReader(new InputStreamReader(in));
 		String json = br.readLine();
         
-		@SuppressWarnings("unchecked")
 		Map <String, Object> theMap = JSONAdapter.fromJSON(json);
         
 		WofostOutputController wc = new WofostOutputController();

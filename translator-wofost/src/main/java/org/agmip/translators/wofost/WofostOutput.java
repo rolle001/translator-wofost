@@ -1,5 +1,8 @@
 package org.agmip.translators.wofost;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.agmip.core.types.TranslatorOutput;
@@ -29,6 +32,15 @@ public abstract class WofostOutput implements TranslatorOutput {
 	
 	static public String runoptFileName = "<default>";
 	
+	static List<String> errList = new ArrayList<String>();
+	static String noValue = "<no value>";
+	
+	protected String Section = "default";
+	
+	public static List<String> errorList()
+	{
+		return errList;
+	}
 	
 	protected String quotedStr(String aString) {
 		return  String.format("'%s'", aString);
@@ -37,5 +49,19 @@ public abstract class WofostOutput implements TranslatorOutput {
 	public void writeFile(String filePath, Map input) {
 		// TODO Auto-generated method stub
 	}
-
+	
+	protected String getValue(HashMap<String, String> aMap, String aVarName, String defaultValue, boolean mustExist)
+	{
+		String result = aMap.get(aVarName);
+		
+		if (result == null) {
+			if (mustExist)
+			{
+				errList.add(String.format("%s: parameter %s not found.", Section, aVarName));
+			}
+			result = defaultValue;
+		}
+		
+		return result;
+	}
 }

@@ -19,42 +19,43 @@ public class WofostOutputSoil extends WofostOutput {
 	public void writeFile(String filePath, Map input) {
 		
 		// TODO map all variables of input file with values in input map (json string)
-		
+		Section = "Soil";
 		Velocity.init();        
-		VelocityContext context = new VelocityContext();
 		
-		// Weather variable.        
-		BucketEntry soil = MapUtil.getBucket(input, "soil");
-		     
-		ArrayList data = soil.getDataList();
-		
-		soilName = MapUtil.getValueOr(soil.getValues(), "soil_name", "default_name");
-		soilFileName = String.format("%s.sol", soilName.replace(' ' ,'_'));
-		
-		context.put( "SOLNAM", quotedStr(soilName));
-		context.put( "ID", MapUtil.getValueOr(soil.getValues(), "soil_id", ""));  
-		context.put( "CLASSIFICATION", MapUtil.getValueOr(soil.getValues(), "classification", ""));
-		context.put( "NOTES", MapUtil.getValueOr(soil.getValues(), "sl_notes", ""));
-		context.put( "SOILSITE", MapUtil.getValueOr(soil.getValues(), "soil_site", ""));        
-		context.put( "SOURCE", MapUtil.getValueOr(soil.getValues(), "sl_source", ""));        
-		
-		context.put( "SLWP", MapUtil.getValueOr(soil.getValues(), "slwp", "-9.999"));        
-		context.put( "SLSAT", MapUtil.getValueOr(soil.getValues(), "slsat", "-9.999"));        
-		
-		
-		// Write template.        
-		Template template = Velocity.getTemplate(templatePath + "wofost_template.sol");        
-		FileWriter F;        
-		try {              
-			F = new FileWriter(String.format("%s%s", filePath, soilFileName));            
-			template.merge( context, F );            
-			F.close();                    
-			} 
-		catch (IOException ex) 
-		{            
-			      
-		}          
-		
+		// get all soils.        
+		ArrayList<BucketEntry> soils = MapUtil.getPackageContents(input, "soils");
+
+		for (BucketEntry soil: soils)
+		{	
+			soilName = MapUtil.getValueOr(soil.getValues(), "soil_id", "default_name");
+			
+			VelocityContext context = new VelocityContext();
+			soilFileName = String.format("%s.sol", soilName.replace(' ' ,'_'));
+			
+			context.put( "SOLNAM", quotedStr(soilName));
+			context.put( "ID", MapUtil.getValueOr(soil.getValues(), "soil_id", ""));  
+			context.put( "CLASSIFICATION", MapUtil.getValueOr(soil.getValues(), "classification", ""));
+			context.put( "NOTES", MapUtil.getValueOr(soil.getValues(), "sl_notes", ""));
+			context.put( "SOILSITE", MapUtil.getValueOr(soil.getValues(), "soil_site", ""));        
+			context.put( "SOURCE", MapUtil.getValueOr(soil.getValues(), "sl_source", ""));        
+			
+			context.put( "SLWP", MapUtil.getValueOr(soil.getValues(), "slwp", "-9.999"));        
+			context.put( "SLSAT", MapUtil.getValueOr(soil.getValues(), "slsat", "-9.999"));        
+			
+			
+			// Write template.        
+			Template template = Velocity.getTemplate(templatePath + "wofost_template.sol");        
+			FileWriter F;        
+			try {              
+				F = new FileWriter(String.format("%s%s", filePath, soilFileName));            
+				template.merge( context, F );            
+				F.close();                    
+				} 
+			catch (IOException ex) 
+			{            
+				      
+			}          
+		}		
 	}
 
 }
