@@ -22,17 +22,21 @@ public class WofostOutputExperiments extends WofostOutput {
 		Section = "Experiment";       
 		
 		// get all experiments
-		ArrayList<BucketEntry> experiments = MapUtil.getPackageContents(input, "experiments");
+		ArrayList<HashMap<String, Object>> experimentsPackage = MapUtil.getRawPackageContents(input, "experiments");
+		
+		//ArrayList<BucketEntry> experiments = MapUtil.getPackageContents(input, "experiments");
+		
 		BufferedWriter bw = null;
     	DataOutputStream out = null;
     	
-		for (BucketEntry experiment: experiments)
+		for (HashMap<String, Object> experiment: experimentsPackage)
 		{	
 			try
 			{
-				HashMap<String, String> experimentValues = experiment.getValues();
+				//HashMap<String, String> experimentValues = experiment.getValues();
+				expName = (String) experiment.get("exname");
 				
-				expName = getValue(experimentValues, "exname", noValue, true);
+				//expName = getValue(experiment, "exname", noValue, true);
 				
 				String expDirName = filePath + expName + "\\";
 				File expDir = new File(expDirName);
@@ -71,8 +75,8 @@ public class WofostOutputExperiments extends WofostOutput {
 				out.close();
 				
 				new WofostOutputRunopt().writeFile(expDirInputName, input);				
-				new WofostOutputTimer().writeFile(expDirInputName, experimentValues);
-				
+//				new WofostOutputTimer().writeFile(expDirInputName, experimentValues);
+//				new WofostOutputSite().writeFile(expDirInputName, experimentValues);
 			}
 			catch (FileNotFoundException e) {
 				System.out.println("file not found");
