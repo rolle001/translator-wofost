@@ -1,13 +1,13 @@
 ** SOIL DATA FILE for use with WOFOST Version 5.0, June 1990
-**   
-** Name           = $SOLNAM
-** Id             = $ID
-** Classification = $CLASSIFICATION
-** Site           = $SOILSITE
-** Source         = $SOURCE
-** Notes          = $NOTES               
+**
+** Name           = 'Millhopper Fine Sand'
+** Id             = IBMZ910014
+** Classification = Loamy,silic,hyperth Arenic Paleudult
+** Site           = 
+** Source         = Gainesville
+** Notes          = AgMIP soil file               
 
-SOLNAM=$SOLNAM
+SOLNAM='Millhopper Fine Sand'
 
 ** physical soil characteristics 
 
@@ -22,9 +22,9 @@ SMTAB    =  -1.000,   0.371,    ! vol. soil moisture content
              3.400,   0.054,
              4.204,   0.030,
              6.000,   0.009
-SMW      =   $SLWP  !  soil moisture content at wilting point [cm3/cm3]			
+SMW      =   -9.999  !  soil moisture content at wilting point [cm3/cm3]			
 SMFCF    =   0.148  !  soil moisture content at field capacity [cm3/cm3]
-SM0      =   $SLSAT  !  soil moisture content at saturation [cm3/cm3]            
+SM0      =   -9.999  !  soil moisture content at saturation [cm3/cm3]            
 CRAIRC   =   0.090  ! critical soil air content for aeration [cm3/cm3]
 
 ** hydraulic conductivity
