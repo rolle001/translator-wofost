@@ -23,17 +23,6 @@ public class WofostOutputWeather extends WofostOutput {
 	
 	// todo: check default values in case of missing values
 	
-	private static final Calendar _calendar = new GregorianCalendar();
-	
-	public static int calculateDayInYear(int day, int month, int year) {
-		
-		_calendar.set(Calendar.YEAR, year);
-		_calendar.set(Calendar.MONTH, month - 1);
-		_calendar.set(Calendar.DAY_OF_MONTH, day);
-		return _calendar.get(Calendar.DAY_OF_YEAR);
-	}
-
-	
     public void writeFile(String filePath, Map input) {
         // Write your file out here.
     	Section = "Weathers";

@@ -1,6 +1,8 @@
 package org.agmip.translators.wofost;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -50,6 +52,28 @@ public abstract class WofostOutput implements TranslatorOutput {
 		// TODO Auto-generated method stub
 	}
 	
+	public static Integer calculateDayInYear(int day, int month, int year) 
+	{
+		Calendar _calendar = new GregorianCalendar();	
+		_calendar.set(Calendar.YEAR, year);
+		_calendar.set(Calendar.MONTH, month - 1);
+		_calendar.set(Calendar.DAY_OF_MONTH, day);
+		return _calendar.get(Calendar.DAY_OF_YEAR);
+	}
+	
+	public static Integer getDayInYear(String sDate)
+	{
+		if (sDate.length() != 8)
+			return -1;
+		
+		int d = Integer.parseInt(sDate.substring(6,8));
+		int m = Integer.parseInt(sDate.substring(4,6));
+		int y = Integer.parseInt(sDate.substring(0,4));
+		
+		return calculateDayInYear(d, m, y);
+		
+	}
+
 	protected String getValue(HashMap<String, String> aMap, String aVarName, String defaultValue, boolean mustExist)
 	{
 		String result = aMap.get(aVarName);
