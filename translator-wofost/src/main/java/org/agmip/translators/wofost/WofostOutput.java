@@ -18,14 +18,8 @@ public abstract class WofostOutput implements TranslatorOutput {
 	static public String soilFileName = "<none>";;
 	static public String soilName = "<none>";;
 	
-	static public String climateFileName = "<none>";;
-	static public String climateName = "<none>";;
-	
 	static public String cropFileName = "<none>";;
 	static public String cropName = "<none>";;
-	
-	static public String rainfallFileName = "<none>";
-	static public String rainfallName = "<none>";
 	
 	static public String timerFileName = "<none>";
 	static public String siteFileName = "<none>";
@@ -88,4 +82,35 @@ public abstract class WofostOutput implements TranslatorOutput {
 		
 		return result;
 	}
+	
+	private String ReplaceIllegalChars(String aName)
+	{
+		aName.replace("/", "_"); 
+		aName.replace("\\", "_"); 
+		aName.replace(":", "_"); 
+		aName.replace("*", "_"); 
+		aName.replace("?", "_"); 
+		aName.replace(">", "_"); 
+		aName.replace("<", "_"); 
+		aName.replace("|", "_"); 
+		aName.replace(" ", "_"); 
+		
+		return aName;
+	}
+	
+	protected String getClimateFileName(String wstID, String stationNumber)
+	{
+		String result = String.format("%s%s.", wstID, stationNumber);
+		return ReplaceIllegalChars(result);
+	}
+	
+	protected String getSoilFileName(String soilID)
+	{
+		String result = String.format("%s.sol", soilID);
+		return ReplaceIllegalChars(result);
+	}
+	
+	
+	
+	
 }

@@ -18,6 +18,8 @@ import java.util.Map;
 
 import org.agmip.util.MapUtil;
 import org.agmip.util.MapUtil.BucketEntry;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class WofostOutputWeather extends WofostOutput {
 	
@@ -26,6 +28,7 @@ public class WofostOutputWeather extends WofostOutput {
     public void writeFile(String filePath, Map input) {
         // Write your file out here.
     	Section = "Weathers";
+    	Logger Log = LoggerFactory.getLogger(WofostOutputWeather.class);
     	
     	NumberFormat nf = NumberFormat.getInstance(Locale.US);
 		nf.setMaximumFractionDigits(1);
@@ -35,17 +38,18 @@ public class WofostOutputWeather extends WofostOutput {
     	// get all weather stations
     	ArrayList<BucketEntry> weatherStations = MapUtil.getPackageContents(input, "weathers");
   	
-		String stationNumber = "1";
 		String WCCFormat = "2";      // CABO format
+		String stationNumber = "1";
 		
 		for (BucketEntry weatherStation: weatherStations)
 		{
 	    	HashMap<String, String> weatherDataValues = weatherStation.getValues();
 			 	
-	    	climateName = MapUtil.getValueOr(weatherDataValues, "wst_name","unknown");
-	    	climateFileName = MapUtil.getValueOr(weatherDataValues, "wst_id","unknown") + stationNumber + ".";	    	
-	    	//climateFileName = climateName.replace(",", "_") + stationNumber + ".";
-	    	String country = MapUtil.getValueOr(weatherDataValues, "wst_loc_1", "unknown");
+	    	String climateName = getValue(weatherDataValues, "wst_name",noValue, true);
+	    	String wstID = getValue(weatherDataValues, "wst_id", noValue, true);
+	    	String climateFileName = getClimateFileName(wstID, stationNumber);	    
+	    	
+	    	String country = getValue(weatherDataValues, "wst_loc_1", noValue, false);
 	    	
 	    	String lat  = getValue(weatherDataValues, "wst_lat", noValue, true);
 			String lon  = getValue(weatherDataValues, "wst_long", "-99", false);
@@ -113,12 +117,12 @@ public class WofostOutputWeather extends WofostOutput {
 	    				bw.write(String.format("** WCCYEARNR=%4s\n", year));
 	    				bw.write("*---------------------------------------------------------*\n");
 	    				
-	    				String angA = MapUtil.getValueOr(weatherDataValues, "anga", "0.00");		// angstrom coefficient A    				
-	    				String angB = MapUtil.getValueOr(weatherDataValues, "angb", "0.00");        // angstrom coefficient B
+	    				String angA = getValue(weatherDataValues, "anga", "0.00", false);	// angstrom coefficient A    				
+	    				String angB = getValue(weatherDataValues, "angb", "0.00", false);   // angstrom coefficient B
 	    				bw.write(String.format("   %s %s %s %s %s\n", lon, lat, elev, angA, angB));
 		    		}
 		    		
-		    		String irra = MapUtil.getValueOr(dailyData, "srad",  "-99.9"); 
+		    		String irra = getValue(dailyData, "srad", "-99.9", false); 
 		    		double firra= Float.parseFloat(irra);
 		    		if (irra != "-99.9")
 		    		{

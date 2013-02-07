@@ -11,6 +11,8 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 import org.agmip.util.MapUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class WofostOutputController {
 	
@@ -81,6 +83,9 @@ public class WofostOutputController {
 		}
 		
 	    public void writeFiles(String filePath, Map input) {
+	    	
+	        Logger Log = LoggerFactory.getLogger(WofostOutputController.class);
+	        //Log.error("ERROR !");
 	        
 	    	WofostOutput.expName = MapUtil.getValueOr(input, "exname", "default");
 	    	String outputFileName = filePath + WofostOutput.expName + "_wofost.zip";

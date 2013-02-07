@@ -12,7 +12,8 @@ import org.apache.velocity.app.Velocity;
 
 public class WofostOutputTimer extends WofostOutput {
 	
-	public void writeFile(String filePath, HashMap<String, String> input) {
+	public void writeFile(String filePath, HashMap<String, String> input) 
+	{
 		// TODO map all variables of input file with values in input map (json string)
 			Section = "Timer";
 			Velocity.init();        

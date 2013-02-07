@@ -27,10 +27,10 @@ public class WofostOutputSoil extends WofostOutput {
 
 		for (BucketEntry soil: soils)
 		{	
-			soilName = MapUtil.getValueOr(soil.getValues(), "soil_id", "default_name");
-			
 			VelocityContext context = new VelocityContext();
-			soilFileName = String.format("%s.sol", soilName.replace(' ' ,'_'));
+			
+			String soilName = MapUtil.getValueOr(soil.getValues(), "soil_id", "default_name");
+			String soilFileName = getSoilFileName(soilName);
 			
 			context.put( "SOLNAM", quotedStr(soilName));
 			context.put( "ID", MapUtil.getValueOr(soil.getValues(), "soil_id", ""));  
