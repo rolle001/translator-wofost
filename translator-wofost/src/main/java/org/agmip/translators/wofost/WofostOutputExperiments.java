@@ -35,6 +35,8 @@ public class WofostOutputExperiments extends WofostOutput {
 			{
 				//HashMap<String, String> experimentValues = experiment.getValues();
 				expName = (String) experiment.get("exname");
+				expName = ReplaceIllegalChars(expName);
+				
 				
 				String expDirName = filePath + expName + "\\";
 				File expDir = new File(expDirName);
@@ -55,17 +57,17 @@ public class WofostOutputExperiments extends WofostOutput {
 				bw.write(String.format("** generated file for experiment %s\n", expName));
 				bw.write("[Directory settings for WOFOST]\n");
 				bw.write("DBMDIR='-'\n");
-				bw.write("DBRDIR='..\\meteo\\dbmrep\\'\n");
+				bw.write("DBRDIR='-'\n");
 				bw.write("WTRDIR='..\\meteo\\cabowe\\'\n");
 				bw.write("SOLDIR='..\\soild\\'\n");
 				bw.write("CRPDIR='..\\cropd\\'\n");
-				bw.write("CLMDIR='..\\meteo\\climd\\'\n");
+				bw.write("CLMDIR='-'\n");
 				bw.write(String.format("RUNDIR='%s'\n", expName + "\\input\\"));
 				bw.write(String.format("OUTDIR='%s'\n", expName + "\\output\\"));
 				bw.write("DCGDIR='-'\n");
 				bw.write("DRVDIR='-'\n");
 				bw.write("GEODIR='-'\n");
-				bw.write(String.format("TMPDIR='%s'\n", expName + "\\output\\temp"));
+				bw.write("TMPDIR='-'\n");
 				bw.write("CURDIR='-'\n");
 				bw.write("EUSDIR='-'\n");
 				

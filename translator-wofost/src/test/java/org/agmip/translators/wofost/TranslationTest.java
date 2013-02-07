@@ -55,7 +55,7 @@ public class TranslationTest
 		Map <String, Object> theMap = JSONAdapter.fromJSON(json);
         
 		WofostOutputController wc = new WofostOutputController();
-		String outputPath = "src\\main\\resources\\";
+		String outputPath = "src\\main\\resources\\OUTPUT";
 		wc.writeFiles(outputPath, theMap);
 		
 		System.out.println("finished");

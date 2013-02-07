@@ -83,8 +83,9 @@ public abstract class WofostOutput implements TranslatorOutput {
 		return result;
 	}
 	
-	private String ReplaceIllegalChars(String aName)
+	protected String ReplaceIllegalChars(String aName)
 	{
+		//todo: check illegal chars for mac and unix
 		aName.replace("/", "_"); 
 		aName.replace("\\", "_"); 
 		aName.replace(":", "_"); 

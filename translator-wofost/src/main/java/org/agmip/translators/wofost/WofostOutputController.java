@@ -93,24 +93,21 @@ public class WofostOutputController {
 	    	File thePath = new File(filePath);
 	    	if (!thePath.exists())
 	    		thePath.mkdir();
-	    	
-	    	String tempFilePath = filePath + "$temp\\";
-	    	createDir(tempFilePath);
 	    	   
-	    	String tempFileWeatherPath = tempFilePath + "meteo\\cabowe\\";
-	    	createDir(tempFilePath + "meteo\\");
-	    	createDir(tempFileWeatherPath);
+	    	String FileWeatherPath = filePath + "\\meteo\\cabowe\\";
+	    	createDir(filePath + "\\meteo\\");
+	    	createDir(FileWeatherPath);
 	    
-	    	String tempFileSoilPath = tempFilePath + "soild\\";
-	    	createDir(tempFileSoilPath);
+	    	String FileSoilPath = filePath + "\\soild\\";
+	    	createDir(FileSoilPath);
 	    		    	
-	    	String tempFileRunPath = tempFilePath + "runs\\";
-	    	createDir(tempFileRunPath);
+	    	String FileRunPath = filePath + "\\runs\\";
+	    	createDir(FileRunPath);
 
-	    	new WofostOutputWeather().writeFile(tempFileWeatherPath, input);
-	    	new WofostOutputSoil().writeFile(tempFileSoilPath, input);
+	    	new WofostOutputWeather().writeFile(FileWeatherPath, input);
+	    	new WofostOutputSoil().writeFile(FileSoilPath, input);
 	    	
-	    	new WofostOutputExperiments().writeFile(tempFileRunPath, input);
+	    	new WofostOutputExperiments().writeFile(FileRunPath, input);
 	    		    	
 //	    	new WofostOutputSite().writeFile(tempFilePath, input);
 //	    	new WofostOutputTimer().writeFile(tempFilePath, input);
@@ -122,7 +119,7 @@ public class WofostOutputController {
 	    		System.out.println(errList.get(i));
 	    	
 	    	// zip all files
-	    	File theTempPath = new File(tempFilePath);
+	    	File theTempPath = new File(filePath);
 	    	File[] _files = theTempPath.listFiles(); 
 	    	for (File f: _files)
 	    		addFiles(f);

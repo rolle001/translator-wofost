@@ -18,7 +18,7 @@ public class WofostOutputRunopt extends WofostOutput {
 			Velocity.init();        
 			VelocityContext context = new VelocityContext();
 			
-			outputFileName = String.format("%s.out", expName);
+			//outputFileName = String.format("%s.out", expName);
 			
 			context.put( "FILENAME", String.format("%s%s", filePath, "runopt.dat"));
 			

@@ -45,7 +45,7 @@ public class WofostOutputWeather extends WofostOutput {
 		{
 	    	HashMap<String, String> weatherDataValues = weatherStation.getValues();
 			 	
-	    	String climateName = getValue(weatherDataValues, "wst_name",noValue, true);
+	    	String climateName = getValue(weatherDataValues, "wst_name",noValue, false);
 	    	String wstID = getValue(weatherDataValues, "wst_id", noValue, true);
 	    	String climateFileName = getClimateFileName(wstID, stationNumber);	    
 	    	
@@ -65,8 +65,9 @@ public class WofostOutputWeather extends WofostOutput {
 		    	for (HashMap<String, String> dailyData : daily  )
 		    	{
 		    		String date = getValue(dailyData, "w_date", noValue, true);
-		    		if (date == noValue)
+		    		if ((date == noValue) || (date.length() != 8))
 		    			continue;
+		    		
 		    		String _year = String.copyValueOf(date.toCharArray(), 0, 4);
 			    	String year2 = String.copyValueOf(date.toCharArray(), 1, 3);
 			    	String month = String.copyValueOf(date.toCharArray(), 4, 2);
@@ -117,19 +118,18 @@ public class WofostOutputWeather extends WofostOutput {
 	    				bw.write(String.format("** WCCYEARNR=%4s\n", year));
 	    				bw.write("*---------------------------------------------------------*\n");
 	    				
-	    				String angA = getValue(weatherDataValues, "anga", "0.00", false);	// angstrom coefficient A    				
-	    				String angB = getValue(weatherDataValues, "angb", "0.00", false);   // angstrom coefficient B
-	    				bw.write(String.format("   %s %s %s %s %s\n", lon, lat, elev, angA, angB));
+	    				bw.write(String.format("   %s %s %s 0.00 0.00\n", lon, lat, elev));
 		    		}
 		    		
-		    		String irra = getValue(dailyData, "srad", "-99.9", false); 
-		    		double firra= Float.parseFloat(irra);
-		    		if (irra != "-99.9")
+		    		String irra = getValue(dailyData, "srad", noValue, true); 
+		    		
+		    		if (irra != noValue)
 		    		{
+		    			double firra= Float.parseFloat(irra);
 		    			firra = firra * 1000.0;  // units conversion from MJ/m2/d -> KJ/m2/d
 		    			irra = nf.format(firra);	
 		    		}
-		    			
+		    				    			
 		    		String tmin = getValue(dailyData, "tmin", noValue, true);
 		    		String tmax = getValue(dailyData, "tmax", noValue, true);
 		    		String vap  = getValue(dailyData, "vprsd", noValue, true);

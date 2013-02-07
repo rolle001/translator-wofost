@@ -34,7 +34,8 @@ public class WofostOutputTimer extends WofostOutput {
 			context.put( "FILENAME", String.format("%s%s", filePath, timerFileName));
 			context.put( "DATE_TIME", new Date().toString());
 			context.put( "RUNNAM", expName);			
-						
+					
+			//todo: splisen in country code en station nr
 			String wstID = getValue(input, "wst_id", noValue, true);
 			if (wstID.equals(noValue))
 				context.put( "CLFILE", noValue);
@@ -42,16 +43,14 @@ public class WofostOutputTimer extends WofostOutput {
 				context.put( "CLFILE", String.format("%s1.", wstID));
 			
 			context.put( "ISYR", expYear);
+			// todo uit json
 			context.put( "CRFILE", cropFileName);
-			
-			
+			// todo: sander			
 			context.put( "IDEM", "xxxx");
-			context.put( "CRPNAM", cropName);
 			
-			String soilID = getValue(input, "soil_id", noValue, true);
-			context.put( "SOLNAM", soilID);
-						
-			context.put( "CLMNAM", wstID);
+			String clmnam = getValue(input, "wth_notes", "weather from AgMIP experiment", false);
+			context.put( "CLMNAM", clmnam);
+			
 			context.put( "ISDAY", expDay);
 						
 			// Write template.        
