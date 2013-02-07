@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.agmip.translators.aquacrop.domain.ManagementEvent;
-import org.agmip.translators.aquacrop.domain.PlantingManagementEvent;
+import org.agmip.translators.aquacrop.domain.PlantingEvent;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.Velocity;
@@ -48,10 +48,10 @@ public class WofostOutputTimer extends WofostOutput {
 			context.put( "CRFILE", cropFileName);
 			
 			String idem = null;
-			List<ManagementEvent> plantingList = eventMap.get(PlantingManagementEvent.class);
+			List<ManagementEvent> plantingList = eventMap.get(PlantingEvent.class);
 			if(plantingList.size()==1){
 				
-				PlantingManagementEvent planting = (PlantingManagementEvent) plantingList.iterator().next();
+				PlantingEvent planting = (PlantingEvent) plantingList.iterator().next();
 				idem = getDayInYear(planting.getDate()).toString();
 			}
 			if(idem.equalsIgnoreCase(null)){

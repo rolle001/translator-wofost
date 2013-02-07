@@ -13,10 +13,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.agmip.translators.aquacrop.domain.Management;
+import org.agmip.translators.aquacrop.domain.Experiment;
 import org.agmip.translators.aquacrop.domain.ManagementEvent;
 import org.agmip.util.MapUtil;
-import org.agmip.util.MapUtil.BucketEntry;
+
 
 public class WofostOutputExperiments extends WofostOutput {
 	
@@ -74,8 +74,10 @@ public class WofostOutputExperiments extends WofostOutput {
 				
 				bw.close();
 				out.close();
+				
+				Experiment exp =new Experiment();
 				@SuppressWarnings("rawtypes")
-				Map<Class, List<ManagementEvent>> eventMap = Management.createEvents(experiment);
+				Map<Class, List<ManagementEvent>> eventMap = exp.createEvents(experiment);
 				
 				new WofostOutputRunopt().writeFile(expDirInputName, experiment);				
 				new WofostOutputTimer().writeFile(expDirInputName, experiment, eventMap);
