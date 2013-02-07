@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.agmip.core.types.TranslatorOutput;
+import org.agmip.translators.aquacrop.domain.ManagementEvent;
 
 public abstract class WofostOutput implements TranslatorOutput {
 	
@@ -40,6 +41,10 @@ public abstract class WofostOutput implements TranslatorOutput {
 	
 	protected String quotedStr(String aString) {
 		return  String.format("'%s'", aString);
+	}
+	
+	public void writeFile(String filePath, Map input, Map<Class, List<ManagementEvent>> eventMap) {
+		// TODO Auto-generated method stub
 	}
 	
 	public void writeFile(String filePath, Map input) {

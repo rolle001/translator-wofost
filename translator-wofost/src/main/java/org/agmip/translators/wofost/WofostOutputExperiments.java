@@ -10,8 +10,11 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import org.agmip.translators.aquacrop.domain.Management;
+import org.agmip.translators.aquacrop.domain.ManagementEvent;
 import org.agmip.util.MapUtil;
 import org.agmip.util.MapUtil.BucketEntry;
 
@@ -71,9 +74,11 @@ public class WofostOutputExperiments extends WofostOutput {
 				
 				bw.close();
 				out.close();
+				@SuppressWarnings("rawtypes")
+				Map<Class, List<ManagementEvent>> eventMap = Management.createEvents(experiment);
 				
 				new WofostOutputRunopt().writeFile(expDirInputName, experiment);				
-				new WofostOutputTimer().writeFile(expDirInputName, experiment);
+				new WofostOutputTimer().writeFile(expDirInputName, experiment, eventMap);
 				new WofostOutputSite().writeFile(expDirInputName, experiment);
 			}
 			catch (FileNotFoundException e) {

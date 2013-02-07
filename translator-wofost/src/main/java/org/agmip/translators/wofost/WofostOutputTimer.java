@@ -4,15 +4,18 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import org.agmip.translators.aquacrop.domain.ManagementEvent;
+import org.agmip.translators.aquacrop.domain.PlantingManagementEvent;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.Velocity;
 
 public class WofostOutputTimer extends WofostOutput {
 	
-	public void writeFile(String filePath, HashMap<String, String> input) 
+	public void writeFile(String filePath, HashMap<String, String> input, Map<Class, List<ManagementEvent>> eventMap) 
 	{
 		// TODO map all variables of input file with values in input map (json string)
 			Section = "Timer";
@@ -44,8 +47,20 @@ public class WofostOutputTimer extends WofostOutput {
 			context.put( "ISYR", expYear);
 			context.put( "CRFILE", cropFileName);
 			
+			String idem = null;
+			List<ManagementEvent> plantingList = eventMap.get(PlantingManagementEvent.class);
+			if(plantingList.size()==1){
+				
+				PlantingManagementEvent planting = (PlantingManagementEvent) plantingList.iterator().next();
+				idem = getDayInYear(planting.getDate()).toString();
+			}
+			if(idem.equalsIgnoreCase(null)){
+				throw new NullPointerException ("no or several planting event found ");
+			}
 			
-			context.put( "IDEM", "xxxx");
+			
+			
+			context.put( "IDEM", idem);
 			context.put( "CRPNAM", cropName);
 			
 			String soilID = getValue(input, "soil_id", noValue, true);
