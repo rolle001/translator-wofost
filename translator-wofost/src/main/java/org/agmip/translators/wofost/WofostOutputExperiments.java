@@ -36,8 +36,6 @@ public class WofostOutputExperiments extends WofostOutput {
 				//HashMap<String, String> experimentValues = experiment.getValues();
 				expName = (String) experiment.get("exname");
 				
-				//expName = getValue(experiment, "exname", noValue, true);
-				
 				String expDirName = filePath + expName + "\\";
 				File expDir = new File(expDirName);
 				expDir.mkdir();
@@ -74,9 +72,9 @@ public class WofostOutputExperiments extends WofostOutput {
 				bw.close();
 				out.close();
 				
-				new WofostOutputRunopt().writeFile(expDirInputName, input);				
-//				new WofostOutputTimer().writeFile(expDirInputName, experimentValues);
-//				new WofostOutputSite().writeFile(expDirInputName, experimentValues);
+				new WofostOutputRunopt().writeFile(expDirInputName, experiment);				
+				new WofostOutputTimer().writeFile(expDirInputName, experiment);
+				new WofostOutputSite().writeFile(expDirInputName, experiment);
 			}
 			catch (FileNotFoundException e) {
 				System.out.println("file not found");
