@@ -20,6 +20,28 @@ import org.agmip.util.MapUtil;
 
 public class WofostOutputExperiments extends WofostOutput {
 	
+	ArrayList<String> runNames = new ArrayList<String>();
+	
+	private void createBatchRun(String filePath) throws IOException
+	{
+		String fName = filePath + "runs.bat";
+		FileOutputStream fstream = new FileOutputStream(fName);
+		DataOutputStream out = new DataOutputStream(fstream);
+		BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(out));		
+		
+		
+		for (String runName: runNames)
+		{		
+			bw.write(String.format("..\\wofost %s\\%s.ini\n", runName, runName));
+		}
+		
+		bw.write("\ndel *.tmp\n\n");
+		bw.write("pause\\");
+		
+		bw.close();
+		out.close();
+	}
+	
 	public void writeFile(String filePath, Map input) {
 		// TODO map all variables of input file with values in input map (json string)
 		Section = "Experiment";       
@@ -27,17 +49,13 @@ public class WofostOutputExperiments extends WofostOutput {
 		// get all experiments
 		ArrayList<HashMap<String, Object>> experimentsPackage = MapUtil.getRawPackageContents(input, "experiments");
 		
-		//ArrayList<BucketEntry> experiments = MapUtil.getPackageContents(input, "experiments");
-		
-		BufferedWriter bw = null;
-    	DataOutputStream out = null;
-    	
 		for (HashMap<String, Object> experiment: experimentsPackage)
 		{	
 			try
 			{
 				//HashMap<String, String> experimentValues = experiment.getValues();
 				expName = (String) experiment.get("exname");
+				runNames.add(ReplaceIllegalChars(expName));
 				
 				String expDirName = filePath + ReplaceIllegalChars(expName) + "\\";
 				File expDir = new File(expDirName);
@@ -54,8 +72,8 @@ public class WofostOutputExperiments extends WofostOutput {
 				String expFileName = getRunIniFileName(expName, expDirName);
 				
 				FileOutputStream fstream = new FileOutputStream(expFileName);
-				out = new DataOutputStream(fstream);
-				bw = new BufferedWriter(new OutputStreamWriter(out));		
+				DataOutputStream out = new DataOutputStream(fstream);
+				BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(out));		
 				
 				bw.write(String.format("** generated file for experiment %s\n", expName));
 				bw.write("[Directory settings for WOFOST]\n");
@@ -90,7 +108,13 @@ public class WofostOutputExperiments extends WofostOutput {
 			} catch (IOException e) {
 				System.out.println("IO error");
 			} 
-		}		
+		}
+		
+		try {
+			createBatchRun(filePath);
+		} catch (IOException e) {
+			System.out.println("IO error");
+		}
 	}
 	
 

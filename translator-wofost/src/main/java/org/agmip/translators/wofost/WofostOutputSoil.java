@@ -41,13 +41,12 @@ public class WofostOutputSoil extends WofostOutput {
 			
 			context.put( "SLWP", MapUtil.getValueOr(soil.getValues(), "slwp", "-9.999"));        
 			context.put( "SLSAT", MapUtil.getValueOr(soil.getValues(), "slsat", "-9.999"));        
-			
-			
+						
 			// Write template.        
 			Template template = Velocity.getTemplate(templatePath + "wofost_template.sol");        
 			FileWriter F;        
 			try {              
-				F = new FileWriter(soilFileName);            
+				F = new FileWriter(getSoilFilePath(soilName, filePath));            
 				template.merge( context, F );            
 				F.close();                    
 				} 

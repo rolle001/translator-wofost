@@ -131,6 +131,11 @@ public abstract class WofostOutput implements TranslatorOutput {
 		return ( ReplaceIllegalChars(soilID) + ".sol");
 	}
 	
+	protected String getSoilFilePath(String aExpName, String aPath)
+	{
+		return (aPath + getSoilFileName(aExpName));
+	}
+	
 	protected String getSiteFileName(String aExpName)
 	{
 		return ( ReplaceIllegalChars(aExpName) + ".sit");
@@ -158,5 +163,13 @@ public abstract class WofostOutput implements TranslatorOutput {
 			result += ".out";
 		
 		return result;
+	}
+	
+	protected String ensureFloat(String aVal)
+	{
+		if (aVal.indexOf(".") == -1)
+			return (aVal + ".");
+		
+		return aVal;
 	}
 }
