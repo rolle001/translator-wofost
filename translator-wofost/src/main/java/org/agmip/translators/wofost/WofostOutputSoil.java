@@ -28,7 +28,6 @@ public class WofostOutputSoil extends WofostOutput {
 		for (BucketEntry soil: soils)
 		{	
 			VelocityContext context = new VelocityContext();
-			// todo make global function to create name
 			String soilName = MapUtil.getValueOr(soil.getValues(), "soil_id", "default_name");
 			String soilFileName = getSoilFileName(soilName);
 			

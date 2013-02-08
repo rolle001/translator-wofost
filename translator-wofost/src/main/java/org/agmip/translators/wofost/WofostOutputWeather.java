@@ -45,15 +45,17 @@ public class WofostOutputWeather extends WofostOutput {
 		{
 	    	HashMap<String, String> weatherDataValues = weatherStation.getValues();
 			 	
-	    	String climateName = getValue(weatherDataValues, "wst_name",noValue, false);
-	    	String wstID = getValue(weatherDataValues, "wst_id", noValue, true);
+	    	String wstID = getValue(weatherDataValues, "wst_id", noValue, true, Section, noValue);
+	    	String climateName = getValue(weatherDataValues, "wst_name",noValue, false, Section, wstID);
+	    	String wthNotes = getValue(weatherDataValues, "wth_notes", noValue, false, Section, wstID);
+	    	
 	    	String climateFileName = getClimateFileName(wstID, stationNumber);	    
 	    	
-	    	String country = getValue(weatherDataValues, "wst_loc_1", noValue, false);
+	    	String country = getValue(weatherDataValues, "wst_loc_1", noValue, false, Section, wstID);
 	    	
-	    	String lat  = getValue(weatherDataValues, "wst_lat", noValue, true);
-			String lon  = getValue(weatherDataValues, "wst_long", "-99", false);
-			String elev = getValue(weatherDataValues, "wst_elev", "-99", false);
+	    	String lat  = getValue(weatherDataValues, "wst_lat", noValue, true, Section, wstID);
+			String lon  = getValue(weatherDataValues, "wst_long", "-99", false, Section, wstID);
+			String elev = getValue(weatherDataValues, "wst_elev", "-99", false, Section, wstID);
 	    	
 	    	ArrayList<HashMap<String, String>> daily = weatherStation.getDataList();
 	    	
@@ -64,7 +66,7 @@ public class WofostOutputWeather extends WofostOutput {
 	    	{	
 		    	for (HashMap<String, String> dailyData : daily  )
 		    	{
-		    		String date = getValue(dailyData, "w_date", noValue, true);
+		    		String date = getValue(dailyData, "w_date", noValue, true, Section, wstID);
 		    		if ((date == noValue) || (date.length() != 8))
 		    			continue;
 		    		
@@ -93,6 +95,10 @@ public class WofostOutputWeather extends WofostOutput {
 	    				bw.write(String.format("*   Station: %s\n", climateName));
 	    				bw.write(String.format("*   Country: %s\n", country));
 	    				bw.write(String.format("*      Year: %s\n", year));
+	    				
+	    				if (!wthNotes.equals(noValue))
+	    					bw.write(String.format("*    Notes: %s\n", wthNotes));
+   				
 	    				bw.write("*\n");
 	    				bw.write(String.format("* Longitude:%s\n", lon));
 	    				bw.write(String.format("*  Latitude: %s\n", lat));
@@ -121,7 +127,7 @@ public class WofostOutputWeather extends WofostOutput {
 	    				bw.write(String.format("   %s %s %s 0.00 0.00\n", lon, lat, elev));
 		    		}
 		    		
-		    		String irra = getValue(dailyData, "srad", noValue, true); 
+		    		String irra = getValue(dailyData, "srad", noValue, true, Section, wstID);
 		    		
 		    		if (irra != noValue)
 		    		{
@@ -130,11 +136,11 @@ public class WofostOutputWeather extends WofostOutput {
 		    			irra = nf.format(firra);	
 		    		}
 		    				    			
-		    		String tmin = getValue(dailyData, "tmin", noValue, true);
-		    		String tmax = getValue(dailyData, "tmax", noValue, true);
-		    		String vap  = getValue(dailyData, "vprsd", noValue, true);
-		    		String wind = getValue(dailyData, "wind", noValue, true);
-		    		String prec = getValue(dailyData, "rain", noValue, true);
+		    		String tmin = getValue(dailyData, "tmin", noValue, true, Section, wstID);
+		    		String tmax = getValue(dailyData, "tmax", noValue, true, Section, wstID);
+		    		String vap  = getValue(dailyData, "vprsd", noValue, true, Section, wstID);
+		    		String wind = getValue(dailyData, "wind", noValue, true, Section, wstID);
+		    		String prec = getValue(dailyData, "rain", noValue, true, Section, wstID);
 		    		
 		    		int iYear = Integer.parseInt(year);
 		    		int iMonth = Integer.parseInt(month);

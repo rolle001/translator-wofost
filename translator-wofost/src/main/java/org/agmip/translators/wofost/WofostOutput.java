@@ -14,25 +14,11 @@ public abstract class WofostOutput implements TranslatorOutput {
 	
 	protected static String templatePath = "src\\main\\resources\\";
 	
-	static public String expName = "<default>";
-	
-	static public String soilFileName = "<none>";;
-	static public String soilName = "<none>";;
-	
-	static public String cropFileName = "<none>";;
-	static public String cropName = "<none>";;
-	
-	static public String timerFileName = "<none>";
-	static public String siteFileName = "<none>";
-	static public String rerunFileName = "<none>";
-	static public String outputFileName = "<none>";
-	
-	static public String runoptFileName = "<default>";
+	static String noValue = "<no value>";	
+	static public String expName = noValue;
+	static protected String Section = noValue;
 	
 	static List<String> errList = new ArrayList<String>();
-	static String noValue = "<no value>";
-	
-	protected String Section = "default";
 	
 	public static List<String> errorList()
 	{
@@ -73,14 +59,14 @@ public abstract class WofostOutput implements TranslatorOutput {
 		
 	}
 
-	protected String getValue(HashMap<String, String> aMap, String aVarName, String defaultValue, boolean mustExist)
+	protected String getValue(HashMap<String, String> aMap, String aVarName, String defaultValue, boolean mustExist, String aTag, String item)
 	{
 		String result = aMap.get(aVarName);
 		
 		if (result == null) {
 			if (mustExist)
 			{
-				errList.add(String.format("%s: parameter %s not found.", Section, aVarName));
+				errList.add(String.format("%s %s: parameter %s not found.", aTag, item, aVarName));
 			}
 			result = defaultValue;
 		}
@@ -109,13 +95,7 @@ public abstract class WofostOutput implements TranslatorOutput {
 		String result = String.format("%s%s.", wstID, stationNumber);
 		return ReplaceIllegalChars(result);
 	}
-	
-//	protected String getSoilFileName(String soilID)
-//	{
-//		String result = String.format("%s.sol", soilID);
-//		return ReplaceIllegalChars(result);
-//	}
-	
+		
 	protected String getRunIniFileName(String aExpName, String aExpDirName)
 	{
 		return (aExpDirName + ReplaceIllegalChars(aExpName) + ".ini");

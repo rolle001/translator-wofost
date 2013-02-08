@@ -14,7 +14,6 @@ public class WofostOutputRunopt extends WofostOutput {
 	
 	public void writeFile(String filePath, Map input) {
 		// TODO map all variables of input file with values in input map (json string)
-		    Section = "Runopt";
 			Velocity.init();        
 			VelocityContext context = new VelocityContext();
 			

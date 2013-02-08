@@ -43,7 +43,6 @@ public class WofostOutputExperiments extends WofostOutput {
 	}
 	
 	public void writeFile(String filePath, Map input) {
-		// TODO map all variables of input file with values in input map (json string)
 		Section = "Experiment";       
 		
 		// get all experiments
@@ -56,6 +55,7 @@ public class WofostOutputExperiments extends WofostOutput {
 				//HashMap<String, String> experimentValues = experiment.getValues();
 				expName = (String) experiment.get("exname");
 				runNames.add(ReplaceIllegalChars(expName));
+				System.out.println("Experiment: " + expName);
 				
 				String expDirName = filePath + ReplaceIllegalChars(expName) + "\\";
 				File expDir = new File(expDirName);

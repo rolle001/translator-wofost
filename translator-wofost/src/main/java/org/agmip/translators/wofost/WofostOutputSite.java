@@ -16,13 +16,11 @@ public class WofostOutputSite extends WofostOutput {
 	
 	private void getPutVariable(HashMap<String, String> aMap, String varName, String tag)
 	{
-		String aVal = getValue(aMap, varName, noValue, true);
+		String aVal = getValue(aMap, varName, noValue, true, Section, expName);
 		context.put(tag, ensureFloat(aVal));
 	}
 	
 	public void writeFile(String filePath, Map _input) {
-		// TODO map all variables of input file with values in input map (json string)
-    		Section = "Site";
     		HashMap<String, String> input = (HashMap<String, String>) _input;
 			Velocity.init();        
 					
@@ -31,7 +29,7 @@ public class WofostOutputSite extends WofostOutput {
 			context.put( "FILENAME", siteFilePath);
 			context.put( "DATE_TIME", new Date().toString());
 			
-			String soilID = getValue(input, "soil_id", noValue, true);
+			String soilID = getValue(input, "soil_id", noValue, true, Section, expName);
 			String soilFileName = getSoilFileName(soilID);
 			context.put( "SOFILE", soilFileName);
 			

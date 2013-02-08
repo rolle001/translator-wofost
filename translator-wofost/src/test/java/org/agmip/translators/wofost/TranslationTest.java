@@ -43,11 +43,9 @@ public class TranslationTest
      */
     public void testTranslation() throws IOException
     {
-      
         System.out.println("start");
         
-        //FileInputStream fstream = new FileInputStream("src\\test\\resources\\ufga8201_mzx.json");
-        FileInputStream fstream = new FileInputStream("src\\test\\resources\\mach_fast.json");
+        FileInputStream fstream = new FileInputStream("src\\test\\resources\\mach_fast_org.json");
         DataInputStream in = new DataInputStream(fstream);
 		BufferedReader br = new BufferedReader(new InputStreamReader(in));
 		String json = br.readLine();

@@ -17,9 +17,9 @@ public class WofostOutputRerun extends WofostOutput {
 			Velocity.init();        
 			VelocityContext context = new VelocityContext();
 			
-			rerunFileName = String.format("%srr.rer", expName);
+			String rerunFileName = String.format("%srr.rer", expName);
 			
-			context.put( "FILENAME", String.format("RUNIO\\%s", timerFileName));
+			context.put( "FILENAME", String.format("RUNIO\\%s", rerunFileName));
 			context.put( "DATE_TIME", new Date().toString());
 			
 			context.put( "RUNNAM", quotedStr(expName));
