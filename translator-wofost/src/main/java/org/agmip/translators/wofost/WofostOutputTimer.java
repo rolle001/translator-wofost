@@ -4,51 +4,70 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.Velocity;
 
+import aquacrop_utils.ManagementEvent;
+import aquacrop_utils.PlantingEvent;
+
 public class WofostOutputTimer extends WofostOutput {
 	
-	public void writeFile(String filePath, HashMap<String, String> input) 
+	public void writeFile(String filePath, Map _input, Map eventMap) 
 	{
-		// TODO map all variables of input file with values in input map (json string)
-			Section = "Timer";
 			Velocity.init();        
 			VelocityContext context = new VelocityContext();
+			HashMap<String, String> input = (HashMap<String, String>) _input;
 			
-			timerFileName = String.format("%s.tim", expName);
+			String timerFilePath = getTimerFilePath(expName, filePath);
 			
-			String expDate = getValue(input, "sdat", noValue, true);
+			String expDate = getValue(input, "sdat", noValue, true, Section, expName);
 			String expYear = noValue;
 			String expDay = noValue;
-			
+			  
 			if (!expDate.equals(noValue))
 			{
 				expYear = expDate.substring(0, 4);
 				expDay =  getDayInYear(expDate).toString();	
 			}
-								
-			context.put( "FILENAME", String.format("%s%s", filePath, timerFileName));
-			context.put( "DATE_TIME", new Date().toString());
-			context.put( "RUNNAM", expName);			
-					
-			//todo: splisen in country code en station nr
-			String wstID = getValue(input, "wst_id", noValue, true);
-			if (wstID.equals(noValue))
-				context.put( "CLFILE", noValue);
 			else
-				context.put( "CLFILE", String.format("%s1.", wstID));
+			{
+				//todo: error logging
+			}
+								
+			context.put( "FILENAME",  timerFilePath);
+			context.put( "DATE_TIME", new Date().toString());
+			context.put( "RUNNAM", ReplaceIllegalChars(expName).substring(0, 6));			
+					
+			String wstID = getValue(input, "wst_id", noValue, true, Section, expName);
+			context.put( "CNTR", wstID);
 			
 			context.put( "ISYR", expYear);
-			// todo uit json
-			context.put( "CRFILE", cropFileName);
-			// todo: sander			
-			context.put( "IDEM", "xxxx");
 			
-			String clmnam = getValue(input, "wth_notes", "weather from AgMIP experiment", false);
+			// not in icasa list should come from DOME
+			String crfile = getValue(input, "wofost_crfile", noValue, true, Section, expName);
+			context.put( "CRFILE", crfile);
+						
+			String idem = noValue;
+			List<ManagementEvent> plantingList = (List<ManagementEvent>) eventMap.get(PlantingEvent.class);
+			if(plantingList.size() > 0)
+			{
+				PlantingEvent planting = (PlantingEvent) plantingList.iterator().next();
+				idem = getDayInYear(planting.getDate()).toString();
+			}
+			
+			if(idem.equals(noValue))
+			{
+				// todo do error logging
+				//throw new NullPointerException ("no or several planting event found ");
+			}
+						
+			context.put( "IDEM", idem);
+			
+			String clmnam = getValue(input, "wth_notes", "weather from AgMIP experiment", false, Section, expName);
 			context.put( "CLMNAM", clmnam);
 			
 			context.put( "ISDAY", expDay);
@@ -57,13 +76,12 @@ public class WofostOutputTimer extends WofostOutput {
 			Template template = Velocity.getTemplate(templatePath + "wofost_template.tim");        
 			FileWriter F;        
 			try {            
-				F = new FileWriter(String.format("%s%s", filePath, timerFileName));            
+				F = new FileWriter(timerFilePath);            
 				template.merge( context, F );            
 				F.close();                    
 				} 
-			catch (IOException ex) 
-			{            
-				      
-			}        
+			catch (IOException e) {
+				System.out.println("IO error");
+			}       
 	}
 }
