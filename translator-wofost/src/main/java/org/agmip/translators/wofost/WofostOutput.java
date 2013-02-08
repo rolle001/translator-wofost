@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.agmip.core.types.TranslatorOutput;
-import org.agmip.translators.aquacrop.domain.ManagementEvent;
+import aquacrop_utils.ManagementEvent;
 
 public abstract class WofostOutput implements TranslatorOutput {
 	

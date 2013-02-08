@@ -5,7 +5,6 @@ import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
@@ -13,9 +12,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.agmip.translators.aquacrop.domain.Experiment;
-import org.agmip.translators.aquacrop.domain.ManagementEvent;
 import org.agmip.util.MapUtil;
+import aquacrop_utils.Experiment;
+import aquacrop_utils.ManagementEvent;
 
 
 public class WofostOutputExperiments extends WofostOutput {
