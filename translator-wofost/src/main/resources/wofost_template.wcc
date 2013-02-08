@@ -4,11 +4,11 @@
 IOPT2  = 2                         ! Start/Stop options, 2 = no reruns
 IPRODL = 1                         ! potential production only
 IOXWL  = 0                         ! no oxygen shortage
-TIMFIL = $TIMFIL               ! Timer filename
-SITFIL = $SITFIL               ! Site filename
+TIMFIL = '$TIMFIL'               ! Timer filename
+SITFIL = '$SITFIL'               ! Site filename
 WOFRER = '-'                       ! Rerun filename
-WOFOUT = $WOFOUT               ! Filename detailed output
-SERIES = -1                        ! no result for series of years
-REPORT = -1                        ! not used since series is -1
-FIXNAM = $FIXNAM               ! Output filename (max 8, no ext.)
-RQUIRD = -1                        ! No long term means results
+WOFOUT = '$WOFOUT'               ! Filename detailed output
+SERIES = 1                        ! no result for series of years
+REPORT = 1                        ! not used since series is -1
+FIXNAM = '$FIXNAM'               ! Output filename (max 8, no ext.)
+RQUIRD = 0                        ! No long term means results

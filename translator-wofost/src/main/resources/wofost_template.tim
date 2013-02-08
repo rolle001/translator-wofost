@@ -4,7 +4,7 @@
 RUNNAM  = '$RUNNAM'
 IWEATH  = 2					! Cabo format
 CNTR    = '$CNTR'           ! country code
-STNO    = $STNO             ! station number
+STNO    = 1                 ! station number
 ISYR    = $ISYR
 INYEAR  = 1
 IRNDAT  = 3                 ! rainfall as in data

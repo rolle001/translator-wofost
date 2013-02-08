@@ -47,7 +47,7 @@ public class TranslationTest
         System.out.println("start");
         
         //FileInputStream fstream = new FileInputStream("src\\test\\resources\\ufga8201_mzx.json");
-        FileInputStream fstream = new FileInputStream("src\\test\\resources\\mach_full.json");
+        FileInputStream fstream = new FileInputStream("src\\test\\resources\\mach_fast.json");
         DataInputStream in = new DataInputStream(fstream);
 		BufferedReader br = new BufferedReader(new InputStreamReader(in));
 		String json = br.readLine();

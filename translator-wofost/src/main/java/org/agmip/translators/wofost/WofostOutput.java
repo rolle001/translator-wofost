@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.agmip.core.types.TranslatorOutput;
+import org.agmip.translators.aquacrop.domain.ManagementEvent;
 
 public abstract class WofostOutput implements TranslatorOutput {
 	
@@ -40,6 +41,10 @@ public abstract class WofostOutput implements TranslatorOutput {
 	
 	protected String quotedStr(String aString) {
 		return  String.format("'%s'", aString);
+	}
+	
+	public void writeFile(String filePath, Map input, Map<Class, List<ManagementEvent>> eventMap) {
+		// TODO Auto-generated method stub
 	}
 	
 	public void writeFile(String filePath, Map input) {
@@ -105,13 +110,53 @@ public abstract class WofostOutput implements TranslatorOutput {
 		return ReplaceIllegalChars(result);
 	}
 	
-	protected String getSoilFileName(String soilID)
+//	protected String getSoilFileName(String soilID)
+//	{
+//		String result = String.format("%s.sol", soilID);
+//		return ReplaceIllegalChars(result);
+//	}
+	
+	protected String getRunIniFileName(String aExpName, String aExpDirName)
 	{
-		String result = String.format("%s.sol", soilID);
-		return ReplaceIllegalChars(result);
+		return (aExpDirName + ReplaceIllegalChars(aExpName) + ".ini");
 	}
 	
+	protected String getRunOptFileName(String aPath)
+	{
+		return String.format("%s%s", aPath, "runopt.dat");
+	}
 	
+	protected String getSoilFileName(String soilID)
+	{
+		return ( ReplaceIllegalChars(soilID) + ".sol");
+	}
 	
+	protected String getSiteFileName(String aExpName)
+	{
+		return ( ReplaceIllegalChars(aExpName) + ".sit");
+	}
 	
+	protected String getSiteFilePath(String aExpName, String aPath)
+	{
+		return (aPath + getSiteFileName(aExpName));
+	}
+	
+	protected String getTimerFileName(String aExpName)
+	{
+		return ( ReplaceIllegalChars(aExpName) + ".tim");
+	}
+	
+	protected String getTimerFilePath(String aExpName, String aPath)
+	{
+		return (aPath + getTimerFileName(aExpName));
+	}
+	
+	protected String getOutputFileName(String aExpName, boolean inclExt)
+	{
+		String result =  ReplaceIllegalChars(aExpName);
+		if (inclExt)
+			result += ".out";
+		
+		return result;
+	}
 }

@@ -47,13 +47,13 @@ public class WofostOutputSoil extends WofostOutput {
 			Template template = Velocity.getTemplate(templatePath + "wofost_template.sol");        
 			FileWriter F;        
 			try {              
-				F = new FileWriter(String.format("%s%s", filePath, soilFileName));            
+				F = new FileWriter(soilFileName);            
 				template.merge( context, F );            
 				F.close();                    
 				} 
 			catch (IOException ex) 
 			{            
-				      
+				System.out.println("IO error"); 
 			}          
 		}		
 	}

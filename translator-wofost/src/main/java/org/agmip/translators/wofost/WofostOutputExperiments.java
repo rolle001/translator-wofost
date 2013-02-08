@@ -10,10 +10,13 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import org.agmip.translators.aquacrop.domain.Experiment;
+import org.agmip.translators.aquacrop.domain.ManagementEvent;
 import org.agmip.util.MapUtil;
-import org.agmip.util.MapUtil.BucketEntry;
+
 
 public class WofostOutputExperiments extends WofostOutput {
 	
@@ -35,10 +38,8 @@ public class WofostOutputExperiments extends WofostOutput {
 			{
 				//HashMap<String, String> experimentValues = experiment.getValues();
 				expName = (String) experiment.get("exname");
-				expName = ReplaceIllegalChars(expName);
 				
-				
-				String expDirName = filePath + expName + "\\";
+				String expDirName = filePath + ReplaceIllegalChars(expName) + "\\";
 				File expDir = new File(expDirName);
 				expDir.mkdir();
 				
@@ -50,7 +51,9 @@ public class WofostOutputExperiments extends WofostOutput {
 				File expDirOutput = new File(expDirOutputName);
 				expDirOutput.mkdir();
 				
-				FileOutputStream fstream = new FileOutputStream(expDirName + expName + ".ini");
+				String expFileName = getRunIniFileName(expName, expDirName);
+				
+				FileOutputStream fstream = new FileOutputStream(expFileName);
 				out = new DataOutputStream(fstream);
 				bw = new BufferedWriter(new OutputStreamWriter(out));		
 				
@@ -74,8 +77,12 @@ public class WofostOutputExperiments extends WofostOutput {
 				bw.close();
 				out.close();
 				
+				Experiment exp = Experiment.create(experiment);
+				@SuppressWarnings("rawtypes")
+				Map<Class<? extends ManagementEvent>, List<ManagementEvent>> eventMap = exp.getEvents();
+				
 				new WofostOutputRunopt().writeFile(expDirInputName, experiment);				
-				new WofostOutputTimer().writeFile(expDirInputName, experiment);
+				new WofostOutputTimer().writeFile(expDirInputName, experiment, eventMap); 
 				new WofostOutputSite().writeFile(expDirInputName, experiment);
 			}
 			catch (FileNotFoundException e) {

@@ -20,20 +20,22 @@ public class WofostOutputRunopt extends WofostOutput {
 			
 			//outputFileName = String.format("%s.out", expName);
 			
-			context.put( "FILENAME", String.format("%s%s", filePath, "runopt.dat"));
+			String fName = getRunOptFileName(filePath);
+			
+			context.put( "FILENAME", fName);
 			
 			context.put( "DATE_TIME", new Date().toString());
 			
-			context.put( "TIMFIL", quotedStr(expName + ".tim"));
-			context.put( "SITFIL", quotedStr(expName + ".sit"));
-			context.put( "WOFOUT", quotedStr(expName + ".out"));
-			context.put( "FIXNAM", quotedStr(expName));
+			context.put( "TIMFIL", getTimerFileName(expName));
+			context.put( "SITFIL", getSiteFileName(expName));
+			context.put( "WOFOUT", getOutputFileName(expName, true));
+			context.put( "FIXNAM", getOutputFileName(expName, false));
 			
 			// Write template.        
 			Template template = Velocity.getTemplate(templatePath + "wofost_template.wcc");        
 			FileWriter F;        
 			try {            
-				F = new FileWriter(String.format("%s%s", filePath, "runopt.dat"));            
+				F = new FileWriter(fName);            
 				template.merge( context, F );            
 				F.close();                    
 			} 

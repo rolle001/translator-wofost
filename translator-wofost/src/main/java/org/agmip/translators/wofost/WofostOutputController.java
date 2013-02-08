@@ -88,7 +88,7 @@ public class WofostOutputController {
 	        //Log.error("ERROR !");
 	        
 	    	WofostOutput.expName = MapUtil.getValueOr(input, "exname", "default");
-	    	String outputFileName = filePath + WofostOutput.expName + "_wofost.zip";
+	    	//String outputFileName = filePath + WofostOutput.expName + "_wofost.zip";
 	    	
 	    	File thePath = new File(filePath);
 	    	if (!thePath.exists())
