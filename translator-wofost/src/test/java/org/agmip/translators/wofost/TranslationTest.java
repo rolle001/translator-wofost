@@ -41,11 +41,11 @@ public class TranslationTest
      * Rigourous Test :-)
      * @throws IOException 
      */
-    public void testTranslation() throws IOException
+    public void __testTranslation() throws IOException
     {
         System.out.println("start");
         
-        FileInputStream fstream = new FileInputStream("src\\test\\resources\\mach_fast_org.json");
+        FileInputStream fstream = new FileInputStream("src\\test\\resources\\mach_fast.json");
         DataInputStream in = new DataInputStream(fstream);
 		BufferedReader br = new BufferedReader(new InputStreamReader(in));
 		String json = br.readLine();
@@ -59,4 +59,23 @@ public class TranslationTest
 		System.out.println("finished");
         
     }
+    
+    /**
+     * Rigourous Test :-)
+     * @throws IOException 
+     */
+    public void testACMOoutput() throws IOException
+    {
+    	System.out.println("start ACMO");
+    	   	
+    	WofostACMO wo = new WofostACMO();
+    	String sourceFolder = "src\\main\\resources\\OUTPUT";
+    	String destFolder = "src\\main\\resources\\OUTPUT";
+    	
+    	wo.execute(sourceFolder, destFolder);
+    	
+    	System.out.println("finished ACMO");
+ 	
+    }
+    
 }
