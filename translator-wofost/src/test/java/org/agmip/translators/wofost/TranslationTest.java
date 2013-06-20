@@ -70,7 +70,7 @@ public class TranslationTest
     	   	
     	WofostACMO wo = new WofostACMO();
     	String sourceFolder = "src\\main\\resources\\OUTPUT";
-    	String destFolder = "src\\main\\resources\\OUTPUT";
+    	String destFolder   = "src\\main\\resources\\OUTPUT";
     	
     	wo.execute(sourceFolder, destFolder);
     	
