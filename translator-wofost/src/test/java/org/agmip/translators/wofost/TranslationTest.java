@@ -41,7 +41,7 @@ public class TranslationTest
      * Rigourous Test :-)
      * @throws IOException 
      */
-    public void __testTranslation() throws IOException
+    public void testTranslation() throws IOException
     {
         System.out.println("start");
         

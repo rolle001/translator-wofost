@@ -18,16 +18,25 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.nio.file.Path;
+import java.text.DateFormat;
+import java.text.NumberFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.AbstractMap;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
+
+import javax.swing.text.DateFormatter;
 
 public class WofostACMO implements AcmoTranslator {
 	
 	static String tagExpName = "EXNAME";
 	static String tagModelVerName = "MODEL_VER";
-	static String modelVersion = "7.1.3";
+	static String modelVersion = "7.1.6";
 	static String YR_tag = "** YR";
 	
 	ArrayList<Map.Entry<String, Integer>> colNames = new ArrayList<Map.Entry<String, Integer>>();
@@ -41,10 +50,19 @@ public class WofostACMO implements AcmoTranslator {
 				return pair.getValue();
 		}
 		
-		return -1;
-		
+		return -1;		
 	}
 	
+	private String getValueOf(String tag, ArrayList<Map.Entry<String, String>> values)
+	{
+		for (int i = 0; i < values.size(); i++)
+		{
+			Map.Entry<String, String> pair = values.get(i);
+			if (pair.getKey().equals(tag))
+				return pair.getValue();
+		}
+		return null;
+	}
 	
 	private BufferedWriter getBufferedWriter(String fileName)
 	{
@@ -115,35 +133,123 @@ public class WofostACMO implements AcmoTranslator {
 		return result;
 	}
 	
-	
-/*	
- *  MODEL_VER,
- * 	HWAH_S,
- * 	CWAH_S,
- * 	ADAT_S,
- * 	MDAT_S,
- * 	HADAT_S,
- * 	LAIX_S,
- * 	PRCP_S,
- * 	ETCP_S,
- * 	NUCM_S,
- * 	NLCM_S
- */
-		
-	private String[] readSummaryOutputFile(String outputFileName, String[] str_in)
+
+	private String getDateFromDayNumber(String dayNr, String year)
 	{
-				
+		
+		String string = String.format("%s-01-01", year);
+		
+		Date date = null;
+		Number nrOfdays = 0;
+		NumberFormat format = NumberFormat.getInstance(Locale.US);
+		try {
+			nrOfdays = format.parse(dayNr);
+		} catch (ParseException e1) {
+			e1.printStackTrace();
+		}
+		
+		try {
+			date = new SimpleDateFormat("yyyy-mm-dd", Locale.US).parse(string);
+			Calendar cal = Calendar.getInstance();
+			cal.setTime(date);
+			cal.add(Calendar.DAY_OF_YEAR, nrOfdays.intValue() - 1);
+			date = cal.getTime();
+			SimpleDateFormat myFormat = new SimpleDateFormat("yyyy-MM-dd");
+			return myFormat.format(date);
+			
+			
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+
+		return null;
+		
+	}
+	
+	/*	
+	 *  MODEL_VER	=	7.1.3,
+	 * 	HWAH_S		=	TWSO,
+	 * 	CWAH_S		=	TAGP,
+	 * 	ADAT_S		=	FLWR (daynumber to date)
+	 * 	MDAT_S		=	HALT (is maturity, daynumber to date),
+	 * 	HADAT_S		=	not available (yet),
+	 * 	LAIX_S		=	LAIM,
+	 * 	PRCP_S		=	RAINT (convert from cm to mm),
+	 * 	ETCP_S		=	TRANSP + EVSOL (convert from cm to mm),
+	 * 	NUCM_S		=	not available (yet),
+	 * 	NLCM_S		=	not available (yet),
+	 */
+
+	private String[] writeValues(ArrayList<Map.Entry<String, String>> summaryValues, String[] _str_in)
+	{
+		
+		NumberFormat format = NumberFormat.getInstance(Locale.US);
+		
+		String[] result;
+		result = new String[_str_in.length];
+		
+		for (int i = 0; i < _str_in.length; i++)
+			result[i] = _str_in[i];
+		
+		result[getColIndexOf(tagModelVerName)] = modelVersion; 
+		
+		int index = getColIndexOf("HWAH_S");
+		String value = getValueOf("TWSO", summaryValues);
+		if (index >= 0)
+			result[index] = value;
+		
+		index = getColIndexOf("CWAH_S");
+		value = getValueOf("TAGP", summaryValues);
+		if (index >= 0)
+			result[index] = value;
+		
+		String valueYR = getValueOf("YR", summaryValues);
+		index = getColIndexOf("ADAT_S");
+		value = getValueOf("FLWR", summaryValues);
+		value = getDateFromDayNumber(value, valueYR);
+		result[index] = value;
+		
+		index = getColIndexOf("MDAT_S");
+		value = getValueOf("HALT", summaryValues);
+		value = getDateFromDayNumber(value, valueYR);
+		result[index] = value;
+
+		index = getColIndexOf("PRCP_S");
+		value = getValueOf("RAINT", summaryValues);
+		if (value != null)
+		{
+			try {
+				Number number = format.parse(value);
+				value = format.format(number.floatValue() * 10);
+				result[index] = value;
+			}
+			catch (Exception e) {
+				e.printStackTrace();
+			}			
+		}
+		
+		index = getColIndexOf("ETCP_S");
+		String value1 = getValueOf("TRANSP", summaryValues);
+		String value2 = getValueOf("EVSOL", summaryValues);
+		try {
+
+			Number number1 = format.parse(value1);
+			Number number2 = format.parse(value2);
+			value = format.format((number1.floatValue() + number2.floatValue()) * 10.0);
+			result[index] = value;
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+		}
+			
+		return result;
+		
+	}
+	
+	private ArrayList<Map.Entry<String, String>> readSummaryOutputFile(String outputFileName)
+	{				
 		ArrayList<Map.Entry<String, String>> summaryValues = new ArrayList<Map.Entry<String, String>>();
-		
-		String[] str_out;
-		str_out = new String[str_in.length];
-		
-		for (int i = 0; i < str_in.length; i++)
-			str_out[i] = str_in[i];
-		
-		str_out[getColIndexOf(tagModelVerName)] = modelVersion; 
-		
-		
+				
 		BufferedReader br = getBufferedReader(outputFileName);
 		boolean bFound = false;
 		if (br != null)
@@ -166,31 +272,28 @@ public class WofostACMO implements AcmoTranslator {
 				
 				if (bFound)
 				{
-					String line_values = null;
-					try {
-						line_values = br.readLine();
-					} catch (IOException e) {
-						e.printStackTrace();
-					}
+					String line_values = br.readLine();
 					
-					// check length of both lines: length line_tag should be length line_values +1				
+							
+					// trim, remove extra spaces and split into words
 					String[] strArray_tags = line_tag.trim().replaceAll(" +" , " ").split(" ");
 					String[] strArray_values = line_values.trim().replaceAll(" +" , " ").split(" ");
 					
+					// check length of both lines: length line_tag should be length line_values +1		
 					if (strArray_tags.length != strArray_values.length + 1)
 					{
 						System.out.println(String.format("invalid number of values in summary file %s", outputFileName));
-						return str_out;
+						return null;
 					}
 					
 					
+					// store as string string-values pairs
 					for (int i = 1; i < strArray_tags.length; i++)
 					{
 						Map.Entry<String, String> pair = new AbstractMap.SimpleEntry<String, String>(strArray_tags[i], strArray_values[i-1]);
 						summaryValues.add(pair);
 					}
-					
-					
+									
 				}
 			} 
 			catch (IOException e) 
@@ -200,21 +303,34 @@ public class WofostACMO implements AcmoTranslator {
 
 		}
 				
-		return str_out;
+		return summaryValues;
 	}
 	
+	
+	private boolean fileExists(String fName)
+	{
+		File f = new File(fName);
+		File ff = new File(f.getAbsolutePath());
+		return ff.exists();
+	}
 	
 	private String getOutPutFileName(String expName, String SourceFolder)
 	{
-		if (expName.isEmpty())
+		if ( (expName.isEmpty()) || (SourceFolder.isEmpty()) )
 			return null;
 		else
-		{
+		{		
 			String fName = String.format("%s\\runs\\%s\\output\\%s.wps",  SourceFolder, expName, expName);
-			return String.format("%s\\runs\\%s\\output\\%s.pps",  SourceFolder, expName, expName);		
-		}
-		
+			if (!fileExists(fName))
+			{
+				fName = String.format("%s\\runs\\%s\\output\\%s.pps",  SourceFolder, expName, expName);
+				if (!fileExists(fName))
+					return null;
+			}
+			return fName;	
+		}	
 	}
+	
 	
 	@Override    
 	public File execute(String sourceFolder, String destFolder) {
@@ -262,12 +378,15 @@ public class WofostACMO implements AcmoTranslator {
 			{
 				
 				String expOutputFileName = getOutPutFileName(str_in[colNrExeName], sourceFolder);
-				String[] str_out = readSummaryOutputFile(expOutputFileName, str_in);
-				
-				
-				cw.writeNext(str_out);
-				System.out.println(expOutputFileName);
-				
+				if (expOutputFileName != null)
+				{
+					ArrayList<Map.Entry<String, String>> summaryValues = readSummaryOutputFile(expOutputFileName);
+					String[] str_out = writeValues(summaryValues, str_in);
+					
+					cw.writeNext(str_out);
+					System.out.println(expOutputFileName);	
+				}
+						
 				str_in = cr.readNext();
 				
 			}
